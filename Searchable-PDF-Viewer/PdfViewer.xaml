@@ -6,9 +6,50 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:ocr="using:Windows.Media.Ocr"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Click="OpenFileButton_Click">Open File</Button>
+        <ScrollViewer Grid.Row="1" x:Name="test" ZoomMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollMode="Enabled">
+            <Grid>
+                <ItemsControl ItemsSource="{Binding PdfPages}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="local:PdfPage">
+                            <Grid>
+                                <Image Source="{x:Bind ImageSource}" Width="{x:Bind Image.PixelWidth}" />
+                                <ItemsControl ItemsSource="{x:Bind Words}" Width="{x:Bind Image.PixelWidth}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                           <Canvas />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="local:Word">
+                                            <Border Width="{x:Bind Width}" Height="{Binding Height}" BorderThickness="2" BorderBrush="Black">
+                                                <Border.RenderTransform>
+                                                    <CompositeTransform TranslateX="{x:Bind X}" TranslateY="{x:Bind Y}"/>
+                                                </Border.RenderTransform>
+                                                <TextBlock Text="{x:Bind Text}" FontSize="15" Foreground="Black" />
+                                            </Border>
+                                        </DataTemplate>                                            
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>                                
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>

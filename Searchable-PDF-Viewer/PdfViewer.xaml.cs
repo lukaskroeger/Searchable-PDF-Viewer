@@ -22,9 +22,18 @@ namespace Searchable_PDF_Viewer
     /// </summary>
     public sealed partial class PdfViewer : Page
     {
+        private PdfViewerViewModel _viewModel;
         public PdfViewer()
         {
             this.InitializeComponent();
+            _viewModel = new PdfViewerViewModel();
+            this.DataContext = _viewModel;
         }
+
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.OpenLocal();
+        }
+
     }
 }
