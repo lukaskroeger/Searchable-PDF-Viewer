@@ -58,6 +58,6 @@ namespace Searchable_PDF_Viewer
             {
                 _height = value;
             }
-        }
+        }     
     }
 }

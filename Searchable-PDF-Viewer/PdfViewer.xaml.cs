@@ -35,5 +35,22 @@ namespace Searchable_PDF_Viewer
             _viewModel.OpenLocal();
         }
 
+        private void SearchBox_QuerySubmitted(SearchBox sender, SearchBoxQueryChangedEventArgs args)
+        {
+            if (_viewModel.FindWord(args.QueryText))
+            {
+                _viewModel.FoundPages.MoveNext();
+                (PdfContainer.ContainerFromItem(_viewModel.FoundPages.Current) as FrameworkElement)?.StartBringIntoView();
+            }
+        }
+        
+        private void SearchNext(object sender, SearchBoxQuerySubmittedEventArgs e)
+        {
+                _viewModel.FoundPages.MoveNext();
+                (PdfContainer.ContainerFromItem(_viewModel.FoundPages.Current) as FrameworkElement)?.StartBringIntoView();
+            
+           
+        }
+
     }
 }

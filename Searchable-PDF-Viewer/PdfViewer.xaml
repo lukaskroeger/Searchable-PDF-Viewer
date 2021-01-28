@@ -14,10 +14,19 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Row="0" Click="OpenFileButton_Click">Open File</Button>
-        <ScrollViewer Grid.Row="1" x:Name="test" ZoomMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollMode="Enabled">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Row="0" Grid.Column="0" Click="OpenFileButton_Click">Open File</Button>
+
+        <SearchBox FocusOnKeyboardInput="True" Grid.Column="2" QueryChanged="SearchBox_QuerySubmitted" QuerySubmitted="SearchNext" SearchHistoryEnabled="False" ></SearchBox>
+
+
+        <ScrollViewer Grid.Row="1" x:Name="test" Grid.Column="0" Grid.ColumnSpan="3"  ZoomMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Visible">
             <Grid>
-                <ItemsControl ItemsSource="{Binding PdfPages}">
+                <ItemsControl x:Name="PdfContainer" ItemsSource="{Binding PdfPages}" >
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel />
@@ -27,23 +36,22 @@
                         <DataTemplate x:DataType="local:PdfPage">
                             <Grid>
                                 <Image Source="{x:Bind ImageSource}" Width="{x:Bind Image.PixelWidth}" />
-                                <ItemsControl ItemsSource="{x:Bind Words}" Width="{x:Bind Image.PixelWidth}">
+                                <ItemsControl ItemsSource="{x:Bind WordOverlays}" Width="{x:Bind Image.PixelWidth}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                           <Canvas />
+                                            <Canvas />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="local:Word">
-                                            <Border Width="{x:Bind Width}" Height="{Binding Height}" BorderThickness="2" BorderBrush="Black">
-                                                <Border.RenderTransform>
+                                            <Rectangle Width="{x:Bind Width}" Height="{Binding Height}" Fill="Yellow" Opacity="0.5">
+                                                <Rectangle.RenderTransform>
                                                     <CompositeTransform TranslateX="{x:Bind X}" TranslateY="{x:Bind Y}"/>
-                                                </Border.RenderTransform>
-                                                <TextBlock Text="{x:Bind Text}" FontSize="15" Foreground="Black" />
-                                            </Border>
-                                        </DataTemplate>                                            
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                        </DataTemplate>
                                     </ItemsControl.ItemTemplate>
-                                </ItemsControl>                                
+                                </ItemsControl>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -17,7 +17,7 @@ namespace Searchable_PDF_Viewer
     {
         public ObservableCollection<PdfPage> PdfPages { get; set; }
         public PdfViewerViewModel()
-        {           
+        {
             PdfPages = new ObservableCollection<PdfPage>();
         }
 
@@ -42,7 +42,7 @@ namespace Searchable_PDF_Viewer
             for (uint i = 0; i < pdfDoc.PageCount; i++)
             {
                 var page = pdfDoc.GetPage(i);
-             
+
                 using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
                 {
                     await page.RenderToStreamAsync(stream);
@@ -58,8 +58,8 @@ namespace Searchable_PDF_Viewer
 
         public async Task ExtractWords()
         {
-           foreach(var pdfPage in PdfPages)
-            {                
+            foreach (var pdfPage in PdfPages)
+            {
                 if (pdfPage.Image.PixelWidth > OcrEngine.MaxImageDimension || pdfPage.Image.PixelHeight > OcrEngine.MaxImageDimension)
                 {
                     return;
@@ -77,7 +77,37 @@ namespace Searchable_PDF_Viewer
                     }
                 }
             }
-           
+
+        }
+
+
+        public IEnumerator<PdfPage> FoundPages{get; set;}
+
+       public bool FindWord(string searchString)
+        {
+            if (!searchString.Equals(""))
+            {
+                var foundPages = new List<PdfPage>();
+                foreach (var page in PdfPages)
+                {
+                    if (page.FindWord(searchString))
+                    {
+                        foundPages.Add(page);
+                    }
+                }
+                FoundPages = foundPages.GetEnumerator();
+                FoundPages.Reset();
+                return true;
+            }
+            else
+            {
+                FoundPages.Dispose();
+                foreach (var page in PdfPages)
+                {
+                    page.WordOverlays.Clear();
+                }
+                return false;
+            }
         }
 
     }
