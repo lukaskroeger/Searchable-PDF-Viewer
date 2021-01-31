@@ -20,7 +20,7 @@ namespace Searchable_PDF_Viewer
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PdfViewer : Page
+    public sealed partial class PdfViewer : Windows.UI.Xaml.Controls.Page
     {
         private PdfViewerViewModel _viewModel;
         public PdfViewer()
@@ -32,23 +32,22 @@ namespace Searchable_PDF_Viewer
 
         private void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.OpenLocal();
+            _viewModel.OpenPdf();
         }
 
-        private void SearchBox_QuerySubmitted(SearchBox sender, SearchBoxQueryChangedEventArgs args)
+        private void Search(SearchBox sender, SearchBoxQueryChangedEventArgs args)
         {
             if (_viewModel.FindWord(args.QueryText))
             {
-                _viewModel.FoundPages.MoveNext();
-                (PdfContainer.ContainerFromItem(_viewModel.FoundPages.Current) as FrameworkElement)?.StartBringIntoView();
+                _viewModel.FoundPages?.MoveNext();
+                (PdfContainer.ContainerFromItem(_viewModel.FoundPages?.Current) as FrameworkElement)?.StartBringIntoView();
             }
         }
         
         private void SearchNext(object sender, SearchBoxQuerySubmittedEventArgs e)
         {
-                _viewModel.FoundPages.MoveNext();
-                (PdfContainer.ContainerFromItem(_viewModel.FoundPages.Current) as FrameworkElement)?.StartBringIntoView();
-            
+            _viewModel.FoundPages?.MoveNext();
+            (PdfContainer.ContainerFromItem(_viewModel.FoundPages?.Current) as FrameworkElement)?.StartBringIntoView();          
            
         }
 

@@ -21,43 +21,40 @@
         </Grid.ColumnDefinitions>
         <Button Grid.Row="0" Grid.Column="0" Click="OpenFileButton_Click">Open File</Button>
 
-        <SearchBox FocusOnKeyboardInput="True" Grid.Column="2" QueryChanged="SearchBox_QuerySubmitted" QuerySubmitted="SearchNext" SearchHistoryEnabled="False" ></SearchBox>
+        <SearchBox FocusOnKeyboardInput="True" Grid.Column="2" QueryChanged="Search" QuerySubmitted="SearchNext" SearchHistoryEnabled="False" />
 
 
-        <ScrollViewer Grid.Row="1" x:Name="test" Grid.Column="0" Grid.ColumnSpan="3"  ZoomMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Visible">
-            <Grid>
-                <ItemsControl x:Name="PdfContainer" ItemsSource="{Binding PdfPages}" >
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="local:PdfPage">
-                            <Grid>
-                                <Image Source="{x:Bind ImageSource}" Width="{x:Bind Image.PixelWidth}" />
-                                <ItemsControl ItemsSource="{x:Bind WordOverlays}" Width="{x:Bind Image.PixelWidth}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <Canvas />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="local:Word">
-                                            <Rectangle Width="{x:Bind Width}" Height="{Binding Height}" Fill="Yellow" Opacity="0.5">
-                                                <Rectangle.RenderTransform>
-                                                    <CompositeTransform TranslateX="{x:Bind X}" TranslateY="{x:Bind Y}"/>
-                                                </Rectangle.RenderTransform>
-                                            </Rectangle>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-            </Grid>
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  ZoomMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Visible">
+            <ItemsControl x:Name="PdfContainer" ItemsSource="{Binding PdfPages}" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="local:Page">
+                        <Grid>
+                            <Image Source="{x:Bind ImageSource}" Width="{x:Bind Image.PixelWidth}" />
+                            <ItemsControl ItemsSource="{x:Bind WordOverlays}" Width="{x:Bind Image.PixelWidth}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="ocr:OcrWord">
+                                        <Rectangle Width="{x:Bind BoundingRect.Width}" Height="{Binding BoundingRect.Height}" Fill="Yellow" Opacity="0.5">
+                                            <Rectangle.RenderTransform>
+                                                <CompositeTransform TranslateX="{x:Bind BoundingRect.X}" TranslateY="{x:Bind BoundingRect.Y}"/>
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </Page>

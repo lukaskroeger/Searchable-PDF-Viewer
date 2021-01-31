@@ -15,28 +15,28 @@ namespace Searchable_PDF_Viewer
 {
     public class PdfViewerViewModel
     {
-        public ObservableCollection<PdfPage> PdfPages { get; set; }
+        public ObservableCollection<Page> PdfPages { get; set; }
         public PdfViewerViewModel()
         {
-            PdfPages = new ObservableCollection<PdfPage>();
+            PdfPages = new ObservableCollection<Page>();
         }
 
-        public async void OpenLocal()
+        public async void OpenPdf()
         {
 
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.HomeGroup;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add(".pdf");
 
             Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
             PdfDocument doc = await PdfDocument.LoadFromFileAsync(file);
 
-            await LoadPdf(doc);
+            await RenderPdf(doc);
             await ExtractWords();
         }
 
-        public async Task LoadPdf(PdfDocument pdfDoc)
+        public async Task RenderPdf(PdfDocument pdfDoc)
         {
             PdfPages.Clear();
             for (uint i = 0; i < pdfDoc.PageCount; i++)
@@ -51,28 +51,29 @@ namespace Searchable_PDF_Viewer
 
                     var source = new SoftwareBitmapSource();
                     await source.SetBitmapAsync(image);
-                    PdfPages.Add(new PdfPage(source, image));
+                    PdfPages.Add(new Page(source, image));
                 };
             }
         }
 
         public async Task ExtractWords()
         {
-            foreach (var pdfPage in PdfPages)
+            OcrEngine ocrEngine = OcrEngine.TryCreateFromUserProfileLanguages();
+            if (ocrEngine != null)
             {
-                if (pdfPage.Image.PixelWidth > OcrEngine.MaxImageDimension || pdfPage.Image.PixelHeight > OcrEngine.MaxImageDimension)
+                foreach (var pdfPage in PdfPages)
                 {
-                    return;
-                }
-                OcrEngine ocrEngine = OcrEngine.TryCreateFromUserProfileLanguages();
-                if (ocrEngine != null)
-                {
+                    if (pdfPage.Image.PixelWidth > OcrEngine.MaxImageDimension || pdfPage.Image.PixelHeight > OcrEngine.MaxImageDimension)
+                    {
+                        return;
+                    }                
+                
                     var ocrResult = await ocrEngine.RecognizeAsync(pdfPage.Image);
                     foreach (var line in ocrResult.Lines)
                     {
                         foreach (var word in line.Words)
                         {
-                            pdfPage.Words.Add(new Word(word));
+                            pdfPage.Words.Add(word);
                         }
                     }
                 }
@@ -81,13 +82,13 @@ namespace Searchable_PDF_Viewer
         }
 
 
-        public IEnumerator<PdfPage> FoundPages{get; set;}
+        public IEnumerator<Page> FoundPages{get; set;}
 
        public bool FindWord(string searchString)
         {
             if (!searchString.Equals(""))
             {
-                var foundPages = new List<PdfPage>();
+                var foundPages = new List<Page>();
                 foreach (var page in PdfPages)
                 {
                     if (page.FindWord(searchString))

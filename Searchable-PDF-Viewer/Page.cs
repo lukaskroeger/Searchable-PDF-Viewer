@@ -5,21 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
+using Windows.Media.Ocr;
 using Windows.UI.Xaml.Media;
 
 namespace Searchable_PDF_Viewer
 {
-    public class PdfPage
+    public class Page
     {
-        public PdfPage(ImageSource imageSource, SoftwareBitmap image)
+        public Page(ImageSource imageSource, SoftwareBitmap image)
         {
-            this.Words = new ObservableCollection<Word>();
-            this.WordOverlays = new ObservableCollection<Word>();
+            this.Words = new Collection<OcrWord>();
+            this.WordOverlays = new ObservableCollection<OcrWord>();
             this.Image = image;
             this.ImageSource = imageSource;
         }
-        public ObservableCollection<Word> Words { get; set; }
-        public ObservableCollection<Word> WordOverlays { get; set; }
+        public Collection<OcrWord> Words { get; set; }
+        public ObservableCollection<OcrWord> WordOverlays { get; set; }
         public ImageSource ImageSource { get; set; }
         public SoftwareBitmap Image { get; set; }
 
